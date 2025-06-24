@@ -1,0 +1,52 @@
+static_resources:
+  listeners:
+    - name: mainapp_sidecar_listener
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 80
+      filter_chains:
+          - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: mainapp_sidecar_hcm_filter
+                route_config:
+                  name: mainapp_sidecar_http_route_config
+                  virtual_hosts:
+                    - name: backend
+                      domains: ["*"]
+                      routes:
+                        - match: 
+                            prefix: "/" 
+                          route: 
+                            timeout: 600s
+                            cluster: mainapp_service
+                http_filters:
+                  - name: envoy.ext_authz
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+                      failure_mode_allow: false
+                      grpc_service:
+                        google_grpc:
+                          target_uri: ${OPA_HOST}:${OPA_PORT}
+                          stat_prefix: ext_authz
+                        timeout: 0.5s
+                      transport_api_version: V3
+                  - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router 
+  clusters:
+    - name: mainapp_service
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: mainapp_service
+        endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: ${SERVICE_NAME}
+                    port_value: ${SERVICE_PORT}

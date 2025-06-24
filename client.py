@@ -1,24 +1,21 @@
 import asyncio
 from fastmcp import Client
 from fastmcp.utilities.mcp_config import MCPConfig, RemoteMCPServer
-from fastmcp.client.auth import BearerAuth
 
-
-# Load api key from token.txt
-with open("token.secret", "r") as f:
-    api_key = f.read().strip()
+"""
+            "authenticated calendar": RemoteMCPServer(
+                url="http://localhost:8001/mcp",
+                transport="streamable-http",
+                auth=BearerAuth(api_key),
+            ),
+"""
 
 client = Client(
     MCPConfig(
         mcpServers={
             "calendar": RemoteMCPServer(
-                url="http://localhost:8000/mcp",
+                url="http://localhost:8000/mcp/",
                 transport="streamable-http"
-            ),
-            "authenticated calendar": RemoteMCPServer(
-                url="http://localhost:8001/mcp",
-                transport="streamable-http",
-                auth=BearerAuth(api_key),
             ),
         }
     )

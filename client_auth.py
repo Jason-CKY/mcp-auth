@@ -9,8 +9,8 @@ with open("token.secret", "r") as f:
 
 async def main():
     async with Client(
-        "http://localhost:8001/mcp", 
-        auth=BearerAuth(token=api_key),
+        "http://localhost:8000/mcp", 
+        # auth=BearerAuth(token=api_key),
     ) as client:
         print(client.transport)
         print(await client.list_tools())

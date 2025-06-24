@@ -46,8 +46,8 @@ uv run server.py
 uv run server_auth.py
 ```
 
-- MCP server (unauthenticated): http://localhost:8000/mcp
-- MCP server (authenticated, via Nginx): http://localhost:8001/mcp
+- MCP server (unauthenticated): <http://localhost:8001/mcp/>
+- MCP server (authenticated, via Nginx): <http://localhost/mcp/>
 
 ### 3. Test the Clients
 

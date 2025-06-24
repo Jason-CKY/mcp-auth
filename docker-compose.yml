@@ -1,0 +1,52 @@
+services:
+  nginx:
+    container_name: proxy
+    image: nginx:1.23.4-alpine
+    volumes:
+      - ./proxy/nginx.conf:/config/nginx.conf
+    command: > 
+      sh -c "
+        cp '/config/nginx.conf' '/etc/nginx/conf.d/default.conf' &&
+        nginx -g 'daemon off;'
+      "
+    ports:
+      - 80:80
+
+  envoy:
+    container_name: envoy
+    build:
+      context: .
+      dockerfile: proxy/envoy/Dockerfile
+    environment:
+      - LOG_LEVEL=debug
+      - SERVICE_NAME=mcp-auth
+      - SERVICE_PORT=8000
+      - OPA_HOST=opa
+      - OPA_PORT=9191
+
+  opa:
+    container_name: opa
+    image: openpolicyagent/opa:0.57.1-envoy-3
+    volumes:
+      - ./proxy/policy.rego:/opa_policies/policy.rego
+    command:
+      - "run"
+      # For debug purposes
+      - "--log-format=json-pretty"
+      - "--set=decision_logs.console=true"
+      - "--log-level=debug"
+      - "--watch" # enables live reloading from your own disk (via mounted volume)
+      # Mandatory config
+      - "--server"
+      - "--ignore=.*" # ignore hidden dirs created by kubernetes
+      - "--set=plugins.envoy_ext_authz_grpc.addr=:9191"
+      - "/opa_policies"
+
+  mcp-auth:
+    container_name: mcp-auth
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+

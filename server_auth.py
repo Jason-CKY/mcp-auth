@@ -1,10 +1,12 @@
 from fastmcp.server.auth import BearerAuthProvider
 from fastmcp.server import FastMCP
+import inspect
 
 with open("public_key.pem", "r") as f:
     public_key_pem = f.read()
 
-auth = BearerAuthProvider(public_key=public_key_pem)
+print(public_key_pem)
+auth = BearerAuthProvider(public_key=inspect.cleandoc(public_key_pem))
 
 
 mcp = FastMCP(name="My Authenticated MCP Server", auth=auth)

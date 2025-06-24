@@ -1,12 +1,11 @@
 import asyncio
-import os
 from fastmcp import Client
 from fastmcp.client.auth import BearerAuth
-from dotenv import load_dotenv
 
+# Load api key from token.txt
+with open("token.secret", "r") as f:
+    api_key = f.read().strip()
 
-load_dotenv()
-api_key = os.getenv("API_KEY")
 
 async def main():
     async with Client(

@@ -15,3 +15,5 @@ wheels/
 
 # secrets
 *.pem
+*.secret
+

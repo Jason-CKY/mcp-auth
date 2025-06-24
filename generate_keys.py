@@ -27,5 +27,5 @@ with open("public_key.pem", "w") as pub_file:
     pub_file.write(key_pair.public_key)
 
 # Write private key to .env file as API_KEY variable
-with open(".env", "w") as env_file:
-    env_file.write(f"API_KEY='{token}'\n")
+with open("token.secret", "w") as env_file:
+    env_file.write(token)

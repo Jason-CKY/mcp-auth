@@ -23,6 +23,8 @@ services:
       - SERVICE_PORT=8000
       - OPA_HOST=opa
       - OPA_PORT=9191
+    volumes:
+      - ./proxy/envoy/envoy.yaml:/config/envoy.yaml
 
   opa:
     container_name: opa

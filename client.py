@@ -3,11 +3,6 @@ from fastmcp import Client
 from fastmcp.utilities.mcp_config import MCPConfig, RemoteMCPServer
 
 """
-            "authenticated calendar": RemoteMCPServer(
-                url="http://localhost:8001/mcp",
-                transport="streamable-http",
-                auth=BearerAuth(api_key),
-            ),
 """
 
 client = Client(
@@ -16,6 +11,10 @@ client = Client(
             "calendar": RemoteMCPServer(
                 url="http://localhost:8000/mcp/",
                 transport="streamable-http"
+            ),
+            "authenticated calendar": RemoteMCPServer(
+                url="http://localhost/mcp/",
+                transport="streamable-http",
             ),
         }
     )
